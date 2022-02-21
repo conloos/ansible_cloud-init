@@ -1,0 +1,19 @@
+argument_specs:
+  main:
+    short_description: Main entrypoint
+    options:
+      cloudinit_iso_dest_dir:
+        type: path
+        default: /var/lib/libvirt/images/
+        reqired: no
+        description: Path to store the ISO, default kvm image path.
+      instance_id:
+        type: str
+        default: "iid-{{ cloudinit_fqdn }}"
+        reqired: no
+        description: Instance ID, this should be provides by a managementsystem.
+      cloudinit_default_rendering:
+        type: str
+        default: container
+        reqired: no
+        description: How to provide the cloudinit data. "container" produces different dictionarys, "virt" creates an ISO.

@@ -1,0 +1,39 @@
+---
+- name: fetch data to ansible_variable
+  block:
+  # fetch data has no option to protect the fetched data so we have to do some extra work
+  - name: create directory
+    ansible.builtin.file:
+      path: /tmp/prefix-{{ cloudinit_fqdn }}
+      state: directory
+      mode: '0700'
+    delegate_to: localhost
+  
+  - name: Fetch files from remote host
+    ansible.builtin.fetch:
+      src: "{{ tempfilepath.path }}/{{ item }}"
+      dest: "/tmp/prefix-{{ cloudinit_fqdn }}/"
+      flat: yes
+    with_items:
+      - meta-data
+      - network-config
+      - user-data
+      - vendor-data
+
+  # store data from files in varables
+  - set_fact:
+      cloudinit_config: "{{ cloudinit_config | default({}) | combine({ item.key : item.value }) }}"
+    with_items:
+      - { key: 'user.user-data', value: "{{ lookup( 'file', '/tmp/prefix-{{ cloudinit_fqdn }}/user-data' ) }}" }
+      - { key: 'user.network-config', value: "{{ lookup( 'file', '/tmp/prefix-{{ cloudinit_fqdn }}/network-config' ) }}" }
+      - { key: 'user.meta-data', value: "{{ lookup( 'file', '/tmp/prefix-{{ cloudinit_fqdn }}/meta-data' ) }}" }
+      - { key: 'user.vendor-data', value: "{{ lookup( 'file', '/tmp/prefix-{{ cloudinit_fqdn }}/vendor-data' ) }}" }
+    no_log: True
+
+  always:
+  - name: cleanup local Data
+    ansible.builtin.file:
+      path: "/tmp/prefix-{{ cloudinit_fqdn }}"
+      state: absent
+    delegate_to: localhost
+...

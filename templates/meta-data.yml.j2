@@ -1,0 +1,9 @@
+{% import './macros.j2' as macroLibrary %}
+#cloud-config
+{% if cloudinit_metadata_raw is defined and cloudinit_metadata_raw|length > 0 -%}
+  {{ macroLibrary.dict_to_yaml(cloudinit_metadata_raw, indent=0) }}
+{%- else -%}
+  {{ macroLibrary.dict_to_yaml(cloudinit_default_metadata_template, indent=0) }}
+{%- endif -%} 
+
+

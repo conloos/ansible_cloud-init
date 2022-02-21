@@ -1,0 +1,16 @@
+# Standards: 0.2
+---
+galaxy_info:
+  # @meta author:value: [Frank Dornheim](https://github.com/conloos)
+  author: "Frank Dornheim <dornheim@posteo.de>"
+  namespace: cloudinit
+  role_name: cloud-init
+  description: Role for startup configuration of a system by cloud-init.
+  license: GPLv3
+  min_ansible_version: 2.11.5
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 21.10
+  galaxy_tags: []
+dependencies: []

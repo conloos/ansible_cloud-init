@@ -1,0 +1,4 @@
+---
+# source: https://cloudinit.readthedocs.io/en/latest/topics/vendordata.html
+cloudinit_default_vendordata_template: {}
+...

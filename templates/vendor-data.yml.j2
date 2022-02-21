@@ -1,0 +1,7 @@
+{% import './macros.j2' as macroLibrary %}
+#cloud-config
+{% if cloudinit_vendordata_raw is defined and cloudinit_vendordata_raw|length > 0 -%}
+  {{ macroLibrary.dict_to_yaml(cloudinit_vendordata_raw, indent=0) }}
+{%- else -%}
+  {{ macroLibrary.dict_to_yaml(cloudinit_default_vendordata_template, indent=0) }}
+{%- endif -%}

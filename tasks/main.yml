@@ -1,0 +1,50 @@
+---
+- include: check.yml
+
+- name: create cloud-init data
+  block:
+    - name: Create temp directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: temp
+      register: tempfilepath
+
+    - name: Create cloud-init config
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ tempfilepath.path }}/{{ item.dest }}"
+        lstrip_blocks: True
+        trim_blocks: True
+      with_items:
+        - { src: meta-data.yml.j2, dest: meta-data }
+        - { src: network-config.yml.j2, dest: network-config }
+        - { src: user-data.yml.j2, dest: user-data }
+        - { src: vendor-data.yml.j2, dest: vendor-data }
+
+    - name: remove blank lines
+      ansible.builtin.lineinfile:
+        path: "{{ tempfilepath.path }}/{{ item }}"
+        state: absent
+        regexp: '^s*$'
+      with_items:
+        - meta-data
+        - network-config
+        - user-data
+        - vendor-data
+
+    # task-branch to create an ISO, e.g. for virtualizers
+    - name: conditionals path - create iso
+      include_tasks: create_iso.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering) != 'container')
+
+    # task-branch to store the data in ansible-variables e.g. for lxd
+    - name: conditionals path - fetch data to ansible_variable
+      include_tasks: fetch_remotedata_to_variable.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering)  == 'container')
+
+  always:
+    - name: cleanup
+      ansible.builtin.file:
+        path: "{{ tempfilepath.path }}"
+        state: absent
+...

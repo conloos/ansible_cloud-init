@@ -1,0 +1,4 @@
+---
+cloudinit_iso_dest_dir: '/var/lib/libvirt/images/'
+instance_id: "iid-{{ cloudinit_fqdn }}"
+...

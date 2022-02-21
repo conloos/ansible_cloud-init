@@ -1,0 +1,7 @@
+---
+- name: Verify that required parameters are set
+  assert:
+    that:
+      - cloudinit_fqdn is defined
+      - cloudinit_fqdn | length > 0
+...

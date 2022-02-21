@@ -1,0 +1,30 @@
+---
+cloudinit_packages: openssh-server
+
+cloudinit_default_userdata_template:
+  runcmd:
+    - [touch, /tmp/user_data_was_run]
+  package_update:
+    - true
+  packages: '{{ cloudinit_packages }}'
+  users:
+    - name: '{{ user_admin.name }}'
+      groups:
+        - adm
+        - sudo
+        - dip
+        - plugdev
+        - cdrom
+      passwd: '{{ user_admin.pass_hash }}'
+      lock_passwd: false
+      shell: /bin/bash
+      ssh_import_id:
+        - '{{ user_admin.github_account }}'
+      ssh_authorized_keys:
+        - '{{ user_admin.ssh_authorized_keys }}'
+      sudo:
+        - ALL=(ALL) ALL
+  prefer_fqdn_over_hostname: True
+  fqdn: '{{ cloudinit_fqdn }}'
+...
+
