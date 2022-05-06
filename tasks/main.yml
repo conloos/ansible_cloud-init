@@ -1,6 +1,4 @@
 ---
-- include: check.yml
-
 - name: create cloud-init data
   block:
     - name: Create temp directory

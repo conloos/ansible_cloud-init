@@ -43,7 +43,6 @@ I tested this role with kvm and lxd/lxc. In principle, however, the CD created w
 | --- | ------------- | ----------- |
 | cloudinit_rendering | container | **container** or **virt**, _default_ is **container** |
 | cloudinit_iso_dest_dir | '/var/lib/libvirt/images/' | path to store the ISO |
-| instance_id | {{ cloudinit_fqdn }} | ID for the instance, they shoult be set by a config system |
 
 ## Sections
 ### meta-data

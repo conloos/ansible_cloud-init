@@ -7,11 +7,6 @@ argument_specs:
         default: /var/lib/libvirt/images/
         reqired: no
         description: Path to store the ISO, default kvm image path.
-      instance_id:
-        type: str
-        default: "iid-{{ cloudinit_fqdn }}"
-        reqired: no
-        description: Instance ID, this should be provides by a managementsystem.
       cloudinit_default_rendering:
         type: str
         default: container
