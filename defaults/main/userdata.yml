@@ -4,8 +4,7 @@ cloudinit_packages: openssh-server
 cloudinit_default_userdata_template:
   runcmd:
     - [touch, /tmp/user_data_was_run]
-  package_update:
-    - true
+  package_update: true
   packages: '{{ cloudinit_packages }}'
   users:
     - name: '{{ user_admin.name }}'
@@ -24,7 +23,7 @@ cloudinit_default_userdata_template:
         - '{{ user_admin.ssh_authorized_keys }}'
       sudo:
         - ALL=(ALL) ALL
-  prefer_fqdn_over_hostname: True
+  prefer_fqdn_over_hostname: true
   fqdn: '{{ cloudinit_fqdn }}'
 ...
 
