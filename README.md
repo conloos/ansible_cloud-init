@@ -79,7 +79,7 @@ cloudinit_userdata_raw:
   runcmd:
   - [touch, /tmp/user_data_was_run]
   package_update:
-    - true
+    - True
   packages:
     - openssh-server
   users:
@@ -91,7 +91,7 @@ cloudinit_userdata_raw:
         - plugdev
         - cdrom
       passwd: "{{ vault_user_admin.pass_hash }}"
-      lock_passwd: false
+      lock_passwd: False
       shell: /bin/bash
       ssh_import_id:
         - "{{ vault_user_admin.github_account }}"
@@ -110,8 +110,8 @@ cloudinit_network_rawdata:
   renderer: networkd
   ethernets: 
     eth0:
-      dhcp4: true
-      dhcp6: false
+      dhcp4: True
+      dhcp6: False
 ```
 
 ## License

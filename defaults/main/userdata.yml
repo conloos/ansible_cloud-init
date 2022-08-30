@@ -4,7 +4,7 @@ cloudinit_packages: openssh-server
 cloudinit_default_userdata_template:
   runcmd:
     - [touch, /tmp/user_data_was_run]
-  package_update: true
+  package_update: True
   packages: '{{ cloudinit_packages }}'
   users:
     - name: '{{ vault_user_admin.name }}'
@@ -15,7 +15,7 @@ cloudinit_default_userdata_template:
         - plugdev
         - cdrom
       passwd: '{{ vault_user_admin.pass_hash }}'
-      lock_passwd: false
+      lock_passwd: False
       shell: /bin/bash
       ssh_import_id:
         - '{{ vault_user_admin.github_account }}'
@@ -23,7 +23,7 @@ cloudinit_default_userdata_template:
         - '{{ vault_user_admin.ssh_authorized_keys }}'
       sudo:
         - ALL=(ALL) ALL
-  prefer_fqdn_over_hostname: true
+  prefer_fqdn_over_hostname: True
   fqdn: '{{ cloudinit_fqdn }}'
 ...
 

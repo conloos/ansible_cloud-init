@@ -1,9 +1,9 @@
-{%- macro dict_to_yaml(my_dict, indent=0, is_part_of_list=false, result="") -%}
+{%- macro dict_to_yaml(my_dict, indent=0, is_part_of_list=False, result="") -%}
 {%- set ns = namespace(result = result) -%}
 {%- set ns.offset = 2 -%} {# set offset #}
 {%- set ns.indent = indent -%}
 {%- for key, value in my_dict.items() -%}
-  {%- if is_part_of_list == true and loop.index == 1 -%} {# dict was part of a list in the previous loop #}
+  {%- if is_part_of_list == True and loop.index == 1 -%} {# dict was part of a list in the previous loop #}
   {%- set ns.result = ns.result ~ " " * ns.indent ~ "- " ~ key -%}
   {%- set ns.indent = ns.indent + ns.offset -%}
   {%- else -%}
@@ -13,13 +13,13 @@
   {%- if value | length == 0 -%} {# if the value is empty, mark it as an empty dict  #}
   {%- set ns.result = ns.result ~ ": " + "{}" -%}
   {%- else -%} {# its not empty we have to recurse #}
-  {%- set ns.result = dict_to_yaml(value, (ns.indent + ns.offset), false, ns.result ~ ":\n") -%}
+  {%- set ns.result = dict_to_yaml(value, (ns.indent + ns.offset), False, ns.result ~ ":\n") -%}
   {%- endif -%}
   {%- elif value is iterable and value is not string -%} {# janky way to check for a list #}
   {%- set ns.result = ns.result ~ ":\n" -%}
   {%- for item in value -%}
     {%- if item is mapping -%} {# if it's a dictionary, too #}
-    {%- set ns.result = dict_to_yaml(item, (ns.indent + ns.offset), true, ns.result ) -%}
+    {%- set ns.result = dict_to_yaml(item, (ns.indent + ns.offset), True, ns.result ) -%}
     {%- else -%}
     {%- set ns.result = ns.result ~ " " * (ns.indent + ns.offset) ~ "- " ~ item ~ "\n" -%}
     {%- endif -%}
@@ -34,9 +34,9 @@
 {%- macro dict_has_key(my_dict, key) -%}
   {%- if my_dict is mapping -%}
     {%- if my_dict[key] is defined and my_dict[key] -%}
-      true
+      True
     {%- endif -%}
   {%- else -%}
-    false
+    False
   {%- endif -%}
 {%- endmacro -%}

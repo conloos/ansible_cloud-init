@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: '{{ item }}'
     state: present
-    update_cache: true
+    update_cache: True
   register: apt_status
   until: apt_status is success
   delay: 6
