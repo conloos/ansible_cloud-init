@@ -11,6 +11,7 @@
   with_items:
     - genisoimage
   when: ansible_os_family == 'Debian'
+  delegate_to: localhost
 
 - name: Create CD-ROM ISO with cloud-init config
   ansible.builtin.shell:
@@ -18,6 +19,7 @@
       genisoimage -output {{ tempfilepath.path }}/{{ cloudinit_fqdn }}-cloudinit.iso -volid cidata -joliet -r
       {{ tempfilepath.path }}/meta-data {{ tempfilepath.path }}/network-config
       {{ tempfilepath.path }}/user-data {{ tempfilepath.path }}/vendor-data  &>> "{{ tempfilepath.path }}/logs"
+  delegate_to: localhost
 
 - name: Copy ISO to target dir
   ansible.builtin.copy:
@@ -27,4 +29,5 @@
     owner: libvirt-qemu
     group: kvm
     mode: '0664'
+  delegate_to: localhost
 ...
