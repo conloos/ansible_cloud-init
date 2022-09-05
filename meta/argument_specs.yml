@@ -9,6 +9,6 @@ argument_specs:
         description: Path to store the ISO, default kvm image path.
       cloudinit_default_rendering:
         type: str
-        default: container
+        default: var
         reqired: no
-        description: How to provide the cloudinit data. "container" produces different dictionarys, "virt" creates an ISO.
+        description: How to provide the cloudinit data. "var" produces different dictionarys, "iso" creates an ISO.
