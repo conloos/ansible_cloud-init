@@ -1,0 +1,52 @@
+---
+- name: create cloud-init data
+  block:
+    - name: Create temp directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: temp
+      register: tempfilepath
+      delegate_to: localhost
+
+    - name: Create cloud-init config
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ tempfilepath.path }}/{{ item.dest }}"
+        lstrip_blocks: True
+        trim_blocks: True
+      with_items:
+        - { src: meta-data.yml.j2, dest: meta-data }
+        - { src: network-config.yml.j2, dest: network-config }
+        - { src: user-data.yml.j2, dest: user-data }
+        - { src: vendor-data.yml.j2, dest: vendor-data }
+      delegate_to: localhost
+
+    - name: remove blank lines
+      ansible.builtin.lineinfile:
+        path: "{{ tempfilepath.path }}/{{ item }}"
+        state: absent
+        regexp: '^s*$'
+      with_items:
+        - meta-data
+        - network-config
+        - user-data
+        - vendor-data
+      delegate_to: localhost
+
+    # task-branch to create an ISO, e.g. for virtualizers
+    - name: conditionals path - create iso
+      include_tasks: create_iso.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering) == 'iso')
+    
+    # task-branch to create all data in a dict
+    - name: conditionals path - create iso
+      include_tasks: data_to_dict.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering) == 'var')
+
+  always:
+    - name: cleanup
+      ansible.builtin.file:
+        path: "{{ tempfilepath.path }}"
+        state: absent
+      delegate_to: localhost
+...
