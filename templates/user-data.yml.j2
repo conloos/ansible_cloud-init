@@ -3,7 +3,7 @@
 {% if cloudinit_userdata_raw is defined and cloudinit_userdata_raw|length > 0 -%}
   {{ macroLibrary.dict_to_yaml(cloudinit_userdata_raw, indent=0) }}
 {%- else -%}
-{%- if esx is defined and esx is sameas true -%}
+{%- if esx is defined and esx -%}
   {{ macroLibrary.dict_to_yaml(cloudinit_default_userdata_esx_template, indent=0) }}
 {%- else -%}
   {{ macroLibrary.dict_to_yaml(cloudinit_default_userdata_template, indent=0) }}
