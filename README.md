@@ -19,7 +19,7 @@ This role uses dicts() as data storage for the meta-, network-, user- and vendor
 Since the file is then first generated with "blank lines" and then cleaned up by "lineinfile", "changes" will always occur.
 
 **Tests**
-I tested this role with kvm and lxd/lxc. In principle, however, the CD created with "virt" should also work with other hypervisors. After a successful test please send a feedback.
+I tested this role with kvm and lxd/lxc. In principle, however, the CD created with "iso" should also work with other hypervisors. After a successful test please send a feedback.
 
 | hypervisor | container type | description |
 | --- | ------------- | ----------- |
@@ -32,7 +32,7 @@ I tested this role with kvm and lxd/lxc. In principle, however, the CD created w
   vars:
     cloud_init_iso_dir: '/var/lib/libvirt/images/'
     cloudinit_fqdn: 'mordor.example.com'
-    cloudinit_metadata_rendering: virt
+    cloudinit_metadata_rendering: iso
   tasks: []
 - name: create vm
   import_role: cloud-init
@@ -41,7 +41,7 @@ I tested this role with kvm and lxd/lxc. In principle, however, the CD created w
 ## Keys to implement
 | Key | Example-Value | Description |
 | --- | ------------- | ----------- |
-| cloudinit_rendering | container | **container** or **virt**, _default_ is **container** |
+| cloudinit_rendering | var | **var** or **iso**, _default_ is **var** |
 | cloudinit_iso_dest_dir | '/var/lib/libvirt/images/' | path to store the ISO |
 
 ## Sections

@@ -8,7 +8,52 @@
       register: tempfilepath
       delegate_to: localhost
 
-    - name: Create cloud-init config
+    # Cloud-Init data can be passed to the images via different ways.
+    # Currently, this role supports the transfer of dictionaries (LXD) and creation of a CD that is mounted at boot time.
+    # The last option is supported by all known HyperVisors, but is messy to use, as this virtual CD should be ejected before users log in. 
+    # ESXi only supports "user-data", as the network data should be set via the VMWare tools. 
+    # With default images (cloud-images) these VMWare tools are not installed and therefore there is a chicken and egg problem.
+    # This role uses the user data to set the configuration in the VM and then install the VMWare tools.
+    # Therefore, creating the cloud-init files:
+    #   * user-data
+    #   * network-data
+    #   * meta-data
+    #   * vendor-data
+    # is split into two parts, as the "network-data" file is needed before the "user-data" is generated.
+    - name: Create cloud-init configs - part 1
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ tempfilepath.path }}/{{ item.dest }}"
+        lstrip_blocks: True
+        trim_blocks: True
+      with_items:
+        - { src: network-config.yml.j2, dest: network-config }
+      delegate_to: localhost
+
+    - name: remove blank lines
+      ansible.builtin.lineinfile:
+        path: "{{ tempfilepath.path }}/{{ item }}"
+        state: absent
+        regexp: '^s*$'
+      with_items:
+        - network-config
+      delegate_to: localhost
+
+    - name: ESX doesn't support cloudinit network config so we inject them by user-data
+      ansible.builtin.set_fact:
+        cloudinit_config: "{{ cloudinit_config | default({}) | combine({ item.key : item.value }) }}"
+      with_items:
+        - { key: 'discover_and_configure_network', value: "{{ lookup( 'file', 'files/discover_and_configure_network.sh' ) }}" }
+        - { key: 'user.network-config', value: "{{ lookup( 'file', '{{ tempfilepath.path }}/network-config' ) }}" }
+      delegate_to: localhost
+      when: esx is defined and esx
+      no_log: True
+
+    - name: debug - fdo
+      ansible.builtin.debug:
+        msg: "cloudinit_config: {{ cloudinit_config['user.network-config'] }}"
+
+    - name: Create cloud-init config - part 2
       template:
         src: "{{ item.src }}"
         dest: "{{ tempfilepath.path }}/{{ item.dest }}"
@@ -16,7 +61,6 @@
         trim_blocks: True
       with_items:
         - { src: meta-data.yml.j2, dest: meta-data }
-        - { src: network-config.yml.j2, dest: network-config }
         - { src: user-data.yml.j2, dest: user-data }
         - { src: vendor-data.yml.j2, dest: vendor-data }
       delegate_to: localhost
@@ -28,25 +72,17 @@
         regexp: '^s*$'
       with_items:
         - meta-data
-        - network-config
         - user-data
         - vendor-data
       delegate_to: localhost
 
     # task-branch to create an ISO, e.g. for virtualizers
     - name: conditionals path - create iso
-      include_tasks: create_iso.yml
-      when: (cloudinit_rendering | default(cloudinit_default_rendering) == 'iso')
+      include_tasks: 02_create_iso.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering) and cloudinit_rendering == 'iso')
     
     # task-branch to create all data in a dict
-    - name: conditionals path - create iso
-      include_tasks: data_to_dict.yml
-      when: (cloudinit_rendering | default(cloudinit_default_rendering) == 'var')
-
-  always:
-    - name: cleanup
-      ansible.builtin.file:
-        path: "{{ tempfilepath.path }}"
-        state: absent
-      delegate_to: localhost
+    - name: conditionals path - create dict
+      include_tasks: 02_data_to_dict.yml
+      when: (cloudinit_rendering | default(cloudinit_default_rendering) and cloudinit_rendering == 'var')
 ...

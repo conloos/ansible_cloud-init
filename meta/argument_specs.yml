@@ -5,10 +5,15 @@ argument_specs:
       cloudinit_iso_dest_dir:
         type: path
         default: /var/lib/libvirt/images/
-        reqired: no
+        reqired: False
         description: Path to store the ISO, default kvm image path.
       cloudinit_default_rendering:
         type: str
-        default: var
-        reqired: no
+        default: "var"
+        reqired: False
         description: How to provide the cloudinit data. "var" produces different dictionarys, "iso" creates an ISO.
+      network_interface_name:
+        type: str
+        default: "eth0"
+        required: False
+        description: Define name of the network interface.

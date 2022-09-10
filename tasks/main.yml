@@ -6,8 +6,8 @@
       msg: "{{ lookup( 'fileglob', '*.yml' ).split(',') | reject('search', 'main.yml') | sort }}"
 
   - name: Add and run all plays
-    include_tasks: "{{ element }}"
+    include_tasks: "{{ ci_element }}"
     with_items: "{{ lookup( 'fileglob', '*.yml' ).split(',') | reject('search', 'main.yml') | sort }}"
     loop_control:
-      loop_var: element
+      loop_var: ci_element
 ...
