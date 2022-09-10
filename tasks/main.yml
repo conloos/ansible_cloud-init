@@ -1,13 +1,7 @@
 ---
-- name: default configuration generic
-  block:
-  - name: add this plays
-    debug:
-      msg: "{{ lookup( 'fileglob', '*.yml' ).split(',') | reject('search', 'main.yml') | sort }}"
-
-  - name: Add and run all plays
-    include_tasks: "{{ ci_element }}"
-    with_items: "{{ lookup( 'fileglob', '*.yml' ).split(',') | reject('search', 'main.yml') | sort }}"
-    loop_control:
-      loop_var: ci_element
+- name: Add and run all plays
+  include_tasks: "{{ ci_element }}"
+  with_items: "{{ lookup( 'ansible.builtin.fileglob', '*.yml' ).split(',') | reject('search', 'main.yml') | reject('search', 'noauto_*') | sort }}"
+  loop_control:
+    loop_var: ci_element
 ...

@@ -1,4 +1,4 @@
-{%- import './macros.j2' as macroLibrary -%}
+{% import './macros.j2' as macroLibrary %}
 #cloud-config
 {% if cloudinit_network_raw is defined and cloudinit_network_raw|length > 0 -%}
 {{ macroLibrary.dict_to_yaml(cloudinit_network_raw, indent=0) }}

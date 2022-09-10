@@ -11,7 +11,7 @@
   with_items:
     - genisoimage
   delegate_to: localhost
-  when: cloudinit_rendering == 'iso'
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 
 - name: Create CD-ROM ISO with cloud-init config
   ansible.builtin.shell:
@@ -20,7 +20,7 @@
       {{ tempfilepath.path }}/meta-data {{ tempfilepath.path }}/network-config
       {{ tempfilepath.path }}/user-data {{ tempfilepath.path }}/vendor-data  &>> "{{ tempfilepath.path }}/logs"
   delegate_to: localhost
-  when: cloudinit_rendering == 'iso'
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 
 - name: Copy ISO to target dir
   ansible.builtin.copy:
@@ -31,5 +31,5 @@
     group: kvm
     mode: '0664'
   delegate_to: localhost
-  when: cloudinit_rendering == 'iso'
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 ...

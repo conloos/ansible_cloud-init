@@ -16,4 +16,4 @@ argument_specs:
         type: str
         default: "eth0"
         required: False
-        description: Define name of the network interface.
+        description: Define name of the network interface. It will be used by templating the netplan config if no raw data is provided.
