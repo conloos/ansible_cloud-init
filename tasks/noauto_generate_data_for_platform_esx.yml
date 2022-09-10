@@ -18,23 +18,23 @@
     lstrip_blocks: True
     trim_blocks: True
   with_items:
-    - { src: network-config.yml.j2, dest: network-config }
+    - { src: "network-config.yml.j2", dest: "network-config" }
   delegate_to: localhost
 
 - name: remove blank lines - ESX
   ansible.builtin.lineinfile:
     path: "{{ tempfilepath.path }}/{{ item.src }}"
     state: absent
-    regexp: '^s*$'
+    regexp: "^s*$"
   with_items:
-    - { src:network-config }
+    - { src: "network-config" }
   delegate_to: localhost
 
 - name: ESX doesn't support cloudinit network config so we inject them by user-data
   ansible.builtin.set_fact:
     cloudinit_config: "{{ cloudinit_config | default({}) | combine({ item.key : item.value }) }}"
   with_items:
-    - { key: 'user.network-config', value: "{{ lookup( 'file', '{{ tempfilepath.path }}/network-config' ) }}" }
+    - { key: "user.network-config", value: "{{ lookup( 'file', '{{ tempfilepath.path }}/network-config' ) }}" }
   delegate_to: localhost
   no_log: True
 ...
