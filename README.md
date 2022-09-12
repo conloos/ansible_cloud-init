@@ -105,7 +105,7 @@ cloudinit_userdata_raw:
         - dip
         - plugdev
         - cdrom
-      passwd: "{{ vault_user_admin.pass_hash }}"
+      passwd: "{{ vault_user_admin.password_hash }}"
       lock_passwd: False
       shell: /bin/bash
       ssh_import_id:
