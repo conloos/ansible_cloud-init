@@ -13,7 +13,7 @@ cloudinit_default_userdata_esx_template:
         - plugdev
         - cdrom
       passwd: '{{ vault_user_admin.password_hash }}'
-      lock_passwd: False
+      lock_passwd: false
       shell: /bin/bash
       ssh_import_id:
         - '{{ vault_user_admin.github_account }}'
@@ -21,9 +21,9 @@ cloudinit_default_userdata_esx_template:
         - '{{ vault_user_admin.ssh_authorized_keys }}'
       sudo:
         - ALL=(ALL) ALL
-  prefer_fqdn_over_hostname: True
+  prefer_fqdn_over_hostname: true
   fqdn: '{{ cloudinit_fqdn }}'
-  package_update: True
+  package_update: true
   packages: '{{ cloudinit_packages }}'
   # source: https://cloudinit.readthedocs.io/en/latest/topics/examples.html
   # All files have to be base64 encoded!!
@@ -37,4 +37,3 @@ cloudinit_default_userdata_esx_template:
     - /usr/sbin/netplan apply
   final_message: "The system is prepped, after $UPTIME seconds"
 ...
-

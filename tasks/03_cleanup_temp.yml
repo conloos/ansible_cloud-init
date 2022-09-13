@@ -1,5 +1,5 @@
 ---
-- name: cleanup
+- name: Cleanup
   ansible.builtin.file:
     path: "{{ tempfilepath.path }}"
     state: absent

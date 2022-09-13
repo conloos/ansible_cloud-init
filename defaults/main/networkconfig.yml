@@ -4,7 +4,6 @@ cloudinit_default_network_template_dhcp:
   renderer: networkd
   ethernets:
     "{{ network_interface_name }}":
-      dhcp4: True
-      dhcp6: False
+      dhcp4: true
+      dhcp6: false
 ...
-

@@ -1,9 +1,9 @@
 ---
-- name: install genisoimage
+- name: Install genisoimage
   ansible.builtin.apt:
     name: '{{ item }}'
     state: present
-    update_cache: True
+    update_cache: true
   register: apt_status
   until: apt_status is success
   delay: 6
@@ -24,7 +24,7 @@
 
 - name: Copy ISO to target dir
   ansible.builtin.copy:
-    remote_src: True
+    remote_src: true
     src: "{{ tempfilepath.path }}/{{ cloudinit_fqdn }}-cloudinit.iso"
     dest: "{{ cloudinit_iso_dest_dir }}"
     owner: libvirt-qemu

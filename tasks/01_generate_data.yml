@@ -16,8 +16,11 @@
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ tempfilepath.path }}/{{ item.dest }}"
-    lstrip_blocks: True
-    trim_blocks: True
+    lstrip_blocks: true
+    trim_blocks: true
+    owner: root
+    group: root
+    mode: '0600'
   with_items:
     - { src: meta-data.yml.j2, dest: meta-data }
     - { src: user-data.yml.j2, dest: user-data }
@@ -25,7 +28,7 @@
     - { src: network-config.yml.j2, dest: network-config, when: not esx }
   delegate_to: localhost
 
-- name: remove blank lines
+- name: Remove blank lines
   ansible.builtin.lineinfile:
     path: "{{ tempfilepath.path }}/{{ item.src }}"
     state: absent

@@ -7,5 +7,5 @@
 #       - '{{ item }} is defined'
 #       - '{{ item }} | length > 0'
 #   with_items:
-#     - 
+#     -
 ...
