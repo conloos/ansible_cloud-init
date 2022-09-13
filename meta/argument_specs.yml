@@ -1,6 +1,12 @@
+---
 argument_specs:
   main:
-    short_description: Main entrypoint
+    # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html#role-argument-validation
+    # https://docs.ansible.com/ansible/latest/dev_guide/developing_program_flow_modules.html#argument-spec
+    short_description: Role to create a cloud-init configuration.
+    description: Role to create a cloud-init configuration.
+    author:
+      - Frank Dornheim
     options:
       cloudinit_iso_dest_dir:
         type: path
@@ -15,5 +21,6 @@ argument_specs:
       network_interface_name:
         type: str
         default: "eth0"
-        required: False
+        required: false
         description: Define name of the network interface. It will be used by templating the netplan config if no raw data is provided.
+...
