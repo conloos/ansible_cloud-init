@@ -8,6 +8,10 @@ argument_specs:
     author:
       - Frank Dornheim
     options:
+      cloudinit_fqdn:
+        type: str
+        required: true
+        description: FQDN of the system.
       cloudinit_iso_dest_dir:
         type: path
         default: /var/lib/libvirt/images/
