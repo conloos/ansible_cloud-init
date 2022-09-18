@@ -1,7 +1,7 @@
 ---
 cloudinit_packages: openssh-server
 
-cloudinit_default_userdata_template:
+cloudinit_default_userdata_esx_template:
   # source of inspiration: https://blah.cloud/infrastructure/using-cloud-init-for-vm-templating-on-vsphere/
   # source of inspiration II: https://gist.github.com/mylesagray/b61c0cc77605158a797cc59080e6fe07
   users:
@@ -25,5 +25,15 @@ cloudinit_default_userdata_template:
   fqdn: '{{ cloudinit_fqdn }}'
   package_update: true
   packages: '{{ cloudinit_packages }}'
+  # source: https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+  # All files have to be base64 encoded!!
+  write_files:
+    - encoding: b64
+      content: "{{ cloudinit_config['user.network-config'] | default({}) | b64encode }}"
+      owner: root:root
+      path: /etc/netplan/50-cloud-init.yaml
+      permissions: '0644'
+  runcmd:
+    - /usr/sbin/netplan apply
   final_message: "The system is prepped, after $UPTIME seconds"
 ...

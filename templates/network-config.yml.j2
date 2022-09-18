@@ -1,18 +1,7 @@
-{%- import './macros.j2' as macroLibrary -%}
+{% import './macros.j2' as macroLibrary %}
 #cloud-config
-{% if cloudinit_rendering | default(cloudinit_default_rendering) == 'container' -%}
-
-{% if cloudinit_network_raw is defined and cloudinit_network_raw|length > 0 -%}
-{{ macroLibrary.dict_to_yaml(cloudinit_network_raw, indent=0) }}
-{%- else -%}
-{{ macroLibrary.dict_to_yaml(cloudinit_default_network_cloud_template_dhcp, indent=0) }}
-{%- endif -%}
-
-{%- else -%}
-
 {% if cloudinit_network_raw is defined and cloudinit_network_raw|length > 0 -%}
 {{ macroLibrary.dict_to_yaml(cloudinit_network_raw, indent=0) }}
 {%- else -%}
 {{ macroLibrary.dict_to_yaml(cloudinit_default_network_template_dhcp, indent=0) }}
-{%- endif -%}
 {%- endif -%}

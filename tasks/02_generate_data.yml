@@ -1,0 +1,52 @@
+---
+- name: Create temp directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: temp
+  register: tempfilepath
+  delegate_to: localhost
+
+# task-branch to create data if platform ESX
+- name: Create data for platform esx - see description
+  ansible.builtin.include_tasks: noauto_generate_data_for_platform_esx.yml
+  when: esx is defined and esx
+
+# the network-config is only generated if the platform is not esx
+- name: Create cloud-init config
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ tempfilepath.path }}/{{ item.dest }}"
+    lstrip_blocks: true
+    trim_blocks: true
+    owner: "{{ local_user }}"
+    group: "{{ local_group }}"
+    mode: '0600'
+  with_items:
+    - { src: meta-data.yml.j2, dest: meta-data }
+    - { src: user-data.yml.j2, dest: user-data }
+    - { src: vendor-data.yml.j2, dest: vendor-data }
+    - { src: network-config.yml.j2, dest: network-config, when: not esx }
+  delegate_to: localhost
+
+- name: Remove blank lines
+  ansible.builtin.lineinfile:
+    path: "{{ tempfilepath.path }}/{{ item.src }}"
+    state: absent
+    regexp: '^s*$'
+  with_items:
+    - { src: meta-data }
+    - { src: user-data }
+    - { src: vendor-data }
+    - { src: network-config, when: not esx }
+  delegate_to: localhost
+
+# task-branch to create an ISO, e.g. for virtualizers
+- name: conditionals path - create iso
+  ansible.builtin.include_tasks: 03_create_iso.yml
+  when: cloudinit_rendering is defined | default(cloudinit_default_rendering) and cloudinit_rendering == 'iso'
+
+# task-branch to create all data in a dict
+- name: conditionals path - create dict
+  ansible.builtin.include_tasks: 03_data_to_dict.yml
+  when: cloudinit_rendering is defined | default(cloudinit_default_rendering) and cloudinit_rendering == 'var'
+...

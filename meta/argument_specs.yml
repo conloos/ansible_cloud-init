@@ -1,14 +1,30 @@
+---
 argument_specs:
   main:
-    short_description: Main entrypoint
+    # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html#role-argument-validation
+    # https://docs.ansible.com/ansible/latest/dev_guide/developing_program_flow_modules.html#argument-spec
+    short_description: Role to create a cloud-init configuration.
+    description: Role to create a cloud-init configuration.
+    author:
+      - Frank Dornheim
     options:
+      cloudinit_fqdn:
+        type: str
+        required: true
+        description: FQDN of the system.
       cloudinit_iso_dest_dir:
         type: path
         default: /var/lib/libvirt/images/
-        reqired: no
+        reqired: false
         description: Path to store the ISO, default kvm image path.
       cloudinit_default_rendering:
         type: str
-        default: var
-        reqired: no
+        default: "var"
+        reqired: false
         description: How to provide the cloudinit data. "var" produces different dictionarys, "iso" creates an ISO.
+      network_interface_name:
+        type: str
+        default: "eth0"
+        required: false
+        description: Define name of the network interface. It will be used by templating the netplan config if no raw data is provided.
+...

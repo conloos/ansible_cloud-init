@@ -1,3 +1,4 @@
 ---
-cloudinit_default_rendering: var
+cloudinit_default_rendering: 'var'
+network_interface_name: "eth0"
 ...

@@ -1,0 +1,43 @@
+---
+# Cloud-Init data can be passed to the images via different ways.
+# Currently, this role supports the transfer of dictionaries (LXD) and creation of a CD that is mounted at boot time.
+# The last option is supported by all known HyperVisors, but is messy to use, as this virtual CD should be ejected before users log in.
+# ESXi only supports "user-data", as the network data should be set via the VMWare tools.
+# With default images (cloud-images) these VMWare tools are not installed and therefore there is a chicken and egg problem.
+# This role uses the user data to set the configuration in the VM and then install the VMWare tools.
+# Therefore, creating the cloud-init files:
+#   * user-data
+#   * network-config
+#   * meta-data
+#   * vendor-data
+# is split into two parts, as the "network-config" file is needed before the "user-data" is generated.
+- name: Create cloud-init network-config to incloude them to user-data
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ tempfilepath.path }}/{{ item.dest }}"
+    lstrip_blocks: true
+    trim_blocks: true
+    owner: "{{ local_user }}"
+    group: "{{ local_group }}"
+    mode: '0600'
+  with_items:
+    - { src: "network-config.yml.j2", dest: "network-config" }
+  delegate_to: localhost
+
+- name: Remove blank lines - ESX
+  ansible.builtin.lineinfile:
+    path: "{{ tempfilepath.path }}/{{ item.src }}"
+    state: absent
+    regexp: "^s*$"
+  with_items:
+    - { src: "network-config" }
+  delegate_to: localhost
+
+- name: ESX doesn't support cloudinit network config so we inject them by user-data
+  ansible.builtin.set_fact:
+    cloudinit_config: "{{ cloudinit_config | default({}) | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: "user.network-config", value: "{{ lookup('file', '{{ tempfilepath.path }}/network-config') }}" }
+  delegate_to: localhost
+  no_log: true
+...

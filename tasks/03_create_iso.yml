@@ -1,17 +1,17 @@
 ---
-- name: install genisoimage
+- name: Install genisoimage
   ansible.builtin.apt:
     name: '{{ item }}'
     state: present
-    update_cache: True
+    update_cache: true
   register: apt_status
   until: apt_status is success
   delay: 6
   retries: 10
   with_items:
     - genisoimage
-  when: ansible_os_family == 'Debian'
   delegate_to: localhost
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 
 - name: Create CD-ROM ISO with cloud-init config
   ansible.builtin.shell:
@@ -20,14 +20,12 @@
       {{ tempfilepath.path }}/meta-data {{ tempfilepath.path }}/network-config
       {{ tempfilepath.path }}/user-data {{ tempfilepath.path }}/vendor-data  &>> "{{ tempfilepath.path }}/logs"
   delegate_to: localhost
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 
 - name: Copy ISO to target dir
   ansible.builtin.copy:
-    remote_src: True
     src: "{{ tempfilepath.path }}/{{ cloudinit_fqdn }}-cloudinit.iso"
     dest: "{{ cloudinit_iso_dest_dir }}"
-    owner: libvirt-qemu
-    group: kvm
     mode: '0664'
-  delegate_to: localhost
+  when: cloudinit_rendering is defined and cloudinit_rendering == 'iso'
 ...

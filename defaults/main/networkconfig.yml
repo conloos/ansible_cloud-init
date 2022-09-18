@@ -1,18 +1,9 @@
 ---
-cloudinit_default_network_cloud_template_dhcp:
-  version: 2
-  renderer: networkd
-  ethernets:
-    eth0:
-      dhcp4: True
-      dhcp6: False
-
 cloudinit_default_network_template_dhcp:
   version: 2
   renderer: networkd
   ethernets:
-    enp1s0:
-      dhcp4: True
-      dhcp6: False
+    "{{ network_interface_name }}":
+      dhcp4: true
+      dhcp6: false
 ...
-

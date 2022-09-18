@@ -1,0 +1,11 @@
+---
+# currently no values that have to be checked
+
+# - name: Verify that required parameters are set
+#   assert:
+#     that:
+#       - '{{ item }} is defined'
+#       - '{{ item }} | length > 0'
+#   with_items:
+#     -
+...
