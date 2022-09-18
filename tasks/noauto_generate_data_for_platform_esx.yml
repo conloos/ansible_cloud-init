@@ -17,8 +17,8 @@
     dest: "{{ tempfilepath.path }}/{{ item.dest }}"
     lstrip_blocks: true
     trim_blocks: true
-    owner: root
-    group: root
+    owner: "{{ local_user }}"
+    group: "{{ local_group }}"
     mode: '0600'
   with_items:
     - { src: "network-config.yml.j2", dest: "network-config" }

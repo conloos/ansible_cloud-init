@@ -18,8 +18,8 @@
     dest: "{{ tempfilepath.path }}/{{ item.dest }}"
     lstrip_blocks: true
     trim_blocks: true
-    owner: root
-    group: root
+    owner: "{{ local_user }}"
+    group: "{{ local_group }}"
     mode: '0600'
   with_items:
     - { src: meta-data.yml.j2, dest: meta-data }
@@ -42,11 +42,11 @@
 
 # task-branch to create an ISO, e.g. for virtualizers
 - name: conditionals path - create iso
-  ansible.builtin.include_tasks: 02_create_iso.yml
+  ansible.builtin.include_tasks: 03_create_iso.yml
   when: cloudinit_rendering is defined | default(cloudinit_default_rendering) and cloudinit_rendering == 'iso'
 
 # task-branch to create all data in a dict
 - name: conditionals path - create dict
-  ansible.builtin.include_tasks: 02_data_to_dict.yml
+  ansible.builtin.include_tasks: 03_data_to_dict.yml
   when: cloudinit_rendering is defined | default(cloudinit_default_rendering) and cloudinit_rendering == 'var'
 ...
